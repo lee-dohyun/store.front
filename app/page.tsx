@@ -92,7 +92,7 @@ export default async function Home() {
     return (
       <div className="product-grid">
         {products.map((p) => (
-          <Link href={`/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`https://product.posselect.com/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
             <div className="card blueprint elev-sm" style={{ cursor: "pointer", height: "100%" }}>
               <BlueprintCorners />
               <div className="product-card-media" style={{ position: "relative", backgroundColor: "#f5f5f5" }}>

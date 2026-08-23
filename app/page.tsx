@@ -1,7 +1,24 @@
 import { BlueprintCorners } from "@posselect/ui";
 import Image from "next/image";
 import Link from "next/link";
+import BannerCarousel from "@/components/BannerCarousel";
 import { fetchProductApi } from "@/lib/product-api";
+
+/**
+ * 이 페이지는 빌드 타임에 프리렌더하지 않는다(#53).
+ *
+ * `fetchProductApi()`의 기본 베이스 URL은 클러스터 내부 주소
+ * (`product-api.customer.svc.cluster.local`)인데, Docker 빌드는 GitHub 호스티드 러너에서
+ * 돌기 때문에 거기서는 이 주소가 해석되지 않는다. 그래서 프리렌더를 허용하면 둘 중 하나가 된다.
+ *   - 조회 실패를 삼키면: "상품 0개"인 빈 HTML이 이미지에 구워져 배포 직후 빈 쇼핑몰이 뜬다(#41).
+ *   - 조회 실패에 예외를 던지면: 빌드 자체가 죽는다(#53, 커밋 23e61a4).
+ * 빌드 타임에 API를 아예 부르지 않는 것이 두 증상의 공통 뿌리를 없애는 방법이다.
+ *
+ * 아래 조회 함수들의 `next: { revalidate }`는 `force-dynamic` 아래에서도 그대로 유효하다.
+ * (Next 15는 **캐시 설정이 없는** fetch만 `force-dynamic`에서 no-store로 덮는다.)
+ * 즉 HTML 렌더는 매 요청이지만 product.api 호출은 revalidate 주기당 1회다.
+ */
+export const dynamic = "force-dynamic";
 
 interface ProductSummary {
   id: number;
@@ -34,51 +51,26 @@ const TRUST_POINTS = [
 ];
 
 async function getBestProducts(): Promise<ProductSummary[]> {
-  try {
-    return await fetchProductApi('/api/products/main/best?limit=10', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return await fetchProductApi('/api/products/main/best?limit=10', { next: { revalidate: 300 } });
 }
 
 async function getNewProducts(): Promise<ProductSummary[]> {
-  try {
-    return await fetchProductApi('/api/products/main/new?limit=10', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return await fetchProductApi('/api/products/main/new?limit=10', { next: { revalidate: 300 } });
 }
 
 async function getProductsByCategory(): Promise<Record<string, ProductSummary[]>> {
-  try {
-    return await fetchProductApi('/api/products/main/by-category', { next: { revalidate: 600 } });
-  } catch (e) {
-    console.error(e);
-    return {};
-  }
+  return await fetchProductApi('/api/products/main/by-category', { next: { revalidate: 600 } });
 }
 
 async function getCategories(): Promise<Category[]> {
-  try {
-    return await fetchProductApi('/api/categories', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return await fetchProductApi('/api/categories', { next: { revalidate: 300 } });
 }
 
 /**
  * product.api에서 메인 페이지 상단 프로모션 배너 목록을 조회합니다.
  */
 async function getBanners(): Promise<Banner[]> {
-  try {
-    return await fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error("[Home/getBanners] 배너 조회 실패 - 속성: { error: ", e, " }");
-    return [];
-  }
+  return await fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
 }
 
 export default async function Home() {
@@ -100,7 +92,7 @@ export default async function Home() {
     return (
       <div className="product-grid">
         {products.map((p) => (
-          <Link href={`/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`https://product.posselect.com/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
             <div className="card blueprint elev-sm" style={{ cursor: "pointer", height: "100%" }}>
               <BlueprintCorners />
               <div className="product-card-media" style={{ position: "relative", backgroundColor: "#f5f5f5" }}>
@@ -140,18 +132,7 @@ export default async function Home() {
       {/* 배너 영역 */}
       {banners.length > 0 && (
         <div className="container" style={{ marginBlock: "var(--space-6)" }}>
-          <Link href={banners[0].link} style={{ textDecoration: "none" }}>
-            <div className="card blueprint elev-md hero" style={{ background: banners[0].bgColor, cursor: "pointer" }}>
-              <BlueprintCorners />
-              <div className="hero-title" style={{ color: "#fff" }}>{banners[0].title}</div>
-              <div className="hero-sub" style={{ color: "rgba(255,255,255,0.8)" }}>{banners[0].subtitle}</div>
-              {banners[0].imageUrl && (
-                <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "50%", opacity: 0.2 }}>
-                  <Image src={banners[0].imageUrl} alt="banner" fill style={{ objectFit: "cover" }} />
-                </div>
-              )}
-            </div>
-          </Link>
+          <BannerCarousel initialBanners={banners} />
         </div>
       )}
 

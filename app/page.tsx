@@ -38,6 +38,15 @@ interface Banner {
   bgColor: string;
 }
 
+interface AdCampaign {
+  id: number;
+  title: string;
+  subtitle: string;
+  link: string;
+  bgColor: string;
+  sponsorName: string;
+}
+
 interface Category {
   id: number;
   name: string;
@@ -70,16 +79,37 @@ async function getCategories(): Promise<Category[]> {
  * product.api에서 메인 페이지 상단 프로모션 배너 목록을 조회합니다.
  */
 async function getBanners(): Promise<Banner[]> {
-  return await fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
+  try {
+    return await fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
+  } catch (e) {
+    console.error("[Home/getBanners] 배너 조회 실패 - 속성: { error: ", e, " }");
+    return [];
+  }
+}
+
+/**
+ * 임시 광고 목업 함수 (백엔드 연동 전까지)
+ */
+async function getAdCampaign(): Promise<AdCampaign | null> {
+  // 실제 API 연동 시 fetchAdApi('/api/ads/main') 형태로 교체 예정
+  return {
+    id: 999,
+    title: "PosSelect 파트너사 모집",
+    subtitle: "지금 바로 입점하고 수수료 0% 혜택을 누리세요!",
+    link: "/partners",
+    bgColor: "#2a2a2a",
+    sponsorName: "PosSelect Partners"
+  };
 }
 
 export default async function Home() {
-  const [bestProducts, newProducts, productsByCategory, categories, banners] = await Promise.all([
+  const [bestProducts, newProducts, productsByCategory, categories, banners, adCampaign] = await Promise.all([
     getBestProducts(),
     getNewProducts(),
     getProductsByCategory(),
     getCategories(),
-    getBanners()
+    getBanners(),
+    getAdCampaign()
   ]);
 
   const categoryMap = new Map(categories.map(c => [c.id, c.name]));
@@ -142,6 +172,50 @@ export default async function Home() {
           <h2 style={{ fontSize: 20, fontWeight: "bold", marginBottom: "var(--space-4)" }}>베스트 상품</h2>
           {renderProductList(bestProducts)}
         </section>
+
+        {/* 제휴/스폰서 광고 영역 */}
+        {adCampaign && (
+          <section style={{ marginBottom: "var(--space-8)" }}>
+            <Link href={adCampaign.link} style={{ textDecoration: "none" }}>
+              <div 
+                className="card blueprint elev-md" 
+                style={{ 
+                  background: adCampaign.bgColor, 
+                  cursor: "pointer", 
+                  padding: "var(--space-6)", 
+                  position: "relative",
+                  overflow: "hidden"
+                }}
+              >
+                <BlueprintCorners />
+                <div style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  backgroundColor: "rgba(255,255,255,0.2)",
+                  color: "#fff",
+                  padding: "4px 8px",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                  borderBottomLeftRadius: 4
+                }}>
+                  AD
+                </div>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div style={{ color: "#fff", fontSize: 24, fontWeight: 700, marginBottom: "var(--space-2)" }}>
+                    {adCampaign.title}
+                  </div>
+                  <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 16, marginBottom: "var(--space-4)" }}>
+                    {adCampaign.subtitle}
+                  </div>
+                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
+                    Sponsored by {adCampaign.sponsorName}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </section>
+        )}
 
         <section>
           <h2 style={{ fontSize: 20, fontWeight: "bold", marginBottom: "var(--space-4)" }}>신상품</h2>

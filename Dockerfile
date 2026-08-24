@@ -1,4 +1,4 @@
-FROM node:20-alpine as base
+FROM node:22-alpine as base
 RUN apk add --no-cache g++ make py3-pip libc6-compat git
 WORKDIR /app
 COPY package*.json ./
@@ -7,7 +7,7 @@ EXPOSE 3000
 FROM base as builder
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 FROM base as production

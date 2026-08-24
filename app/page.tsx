@@ -1,5 +1,4 @@
-import { BlueprintCorners } from "@posselect/ui";
-import Image from "next/image";
+import { ProductCard } from "@posselect/ui";
 import Link from "next/link";
 import BannerCarousel from "@/components/BannerCarousel";
 import { fetchProductApi } from "@/lib/product-api";
@@ -93,23 +92,12 @@ export default async function Home() {
       <div className="product-grid">
         {products.map((p) => (
           <Link href={`https://product.posselect.com/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
-            <div className="card blueprint elev-sm" style={{ cursor: "pointer", height: "100%" }}>
-              <BlueprintCorners />
-              <div className="product-card-media" style={{ position: "relative", backgroundColor: "#f5f5f5" }}>
-                {p.thumbnailUrl ? (
-                  <Image src={p.thumbnailUrl} alt={p.name} fill style={{ objectFit: "cover" }} sizes="(max-width: 768px) 100vw, 33vw" />
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "#999" }}>이미지 없음</div>
-                )}
-              </div>
-              <div className="product-card-body">
-                {p.stockQuantity <= 0 && <div className="card-kicker" style={{ color: "var(--color-danger)" }}>품절</div>}
-                <div className="card-title" style={{ fontSize: 14, marginTop: p.stockQuantity <= 0 ? "0.2rem" : "1.2rem" }}>
-                  {p.name}
-                </div>
-                <div className="card-meta product-card-price">{p.price.toLocaleString()}원</div>
-              </div>
-            </div>
+            <ProductCard
+              name={p.name}
+              price={p.price}
+              thumbnailUrl={p.thumbnailUrl}
+              isSoldOut={p.stockQuantity <= 0}
+            />
           </Link>
         ))}
       </div>

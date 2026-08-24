@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
-  swcMinify: true,
   transpilePackages: ["@posselect/ui"],
   // 외부에서 호출될 경우, 애플리케이션이 위치한 경로 기준을 명확히 설정
   basePath: "",

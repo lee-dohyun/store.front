@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+.claude
+.agents
+.cursor
+*.md
+!README.md
+.env*
+.gitignore
+coverage
+.vitest

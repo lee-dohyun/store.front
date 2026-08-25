@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { BlueprintCorners } from "@posselect/ui";
@@ -14,9 +14,13 @@ interface Banner {
   bgColor: string;
 }
 
+const SWIPE_THRESHOLD_PX = 50;
+
 export default function BannerCarousel({ initialBanners }: { initialBanners: Banner[] }) {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const dragStartX = useRef<number | null>(null);
+  const didSwipe = useRef(false);
 
   useEffect(() => {
     // Shuffle the banners on the client side for random, even exposure
@@ -31,6 +35,39 @@ export default function BannerCarousel({ initialBanners }: { initialBanners: Ban
     }, 5000);
     return () => clearInterval(timer);
   }, [banners.length]);
+
+  const goToRelative = (offset: number) => {
+    setCurrentIndex((prev) => (prev + offset + banners.length) % banners.length);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragStartX.current = e.clientX;
+    didSwipe.current = false;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartX.current === null) return;
+    if (Math.abs(e.clientX - dragStartX.current) > 10) {
+      didSwipe.current = true;
+    }
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartX.current === null) return;
+    const diff = e.clientX - dragStartX.current;
+    dragStartX.current = null;
+    if (Math.abs(diff) > SWIPE_THRESHOLD_PX) {
+      goToRelative(diff < 0 ? 1 : -1);
+    }
+  };
+
+  const handleLinkClick = (e: React.MouseEvent) => {
+    if (didSwipe.current) {
+      e.preventDefault();
+      didSwipe.current = false;
+    }
+  };
 
   if (banners.length === 0) {
     // Fallback to first banner for SSR or before client hydration
@@ -57,8 +94,14 @@ export default function BannerCarousel({ initialBanners }: { initialBanners: Ban
   const currentBanner = banners[currentIndex];
 
   return (
-    <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--radius-lg)" }}>
-      <Link href={currentBanner.link} style={{ textDecoration: "none" }}>
+    <div
+      style={{ position: "relative", overflow: "hidden", borderRadius: "var(--radius-lg)", touchAction: "pan-y" }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      <Link href={currentBanner.link} style={{ textDecoration: "none" }} onClick={handleLinkClick} draggable={false}>
         <div className="card blueprint elev-md hero" style={{ background: currentBanner.bgColor, cursor: "pointer", transition: "background-color 0.5s ease" }}>
           <BlueprintCorners />
           <div className="hero-title" style={{ color: "#fff", position: "relative", zIndex: 10 }}>{currentBanner.title}</div>

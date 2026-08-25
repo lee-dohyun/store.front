@@ -3,6 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchProductApi } from "@/lib/product-api";
 
+// #55: 프리렌더 없음 — product.api 장애가 런타임 예외로 전파되어 error.tsx가 잡는다.
+// #41: catch → [] 조용한 실패는 의도적으로 제거됨. 에러가 나야 error boundary가 발동한다.
+export const dynamic = "force-dynamic";
+
 interface ProductSummary {
   id: number;
   categoryId: number;
@@ -34,51 +38,26 @@ const TRUST_POINTS = [
 ];
 
 async function getBestProducts(): Promise<ProductSummary[]> {
-  try {
-    return await fetchProductApi('/api/products/main/best?limit=10', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return fetchProductApi('/api/products/main/best?limit=10', { next: { revalidate: 300 } });
 }
 
 async function getNewProducts(): Promise<ProductSummary[]> {
-  try {
-    return await fetchProductApi('/api/products/main/new?limit=10', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return fetchProductApi('/api/products/main/new?limit=10', { next: { revalidate: 300 } });
 }
 
 async function getProductsByCategory(): Promise<Record<string, ProductSummary[]>> {
-  try {
-    return await fetchProductApi('/api/products/main/by-category', { next: { revalidate: 600 } });
-  } catch (e) {
-    console.error(e);
-    return {};
-  }
+  return fetchProductApi('/api/products/main/by-category', { next: { revalidate: 600 } });
 }
 
 async function getCategories(): Promise<Category[]> {
-  try {
-    return await fetchProductApi('/api/categories', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  return fetchProductApi('/api/categories', { next: { revalidate: 300 } });
 }
 
 /**
  * product.api에서 메인 페이지 상단 프로모션 배너 목록을 조회합니다.
  */
 async function getBanners(): Promise<Banner[]> {
-  try {
-    return await fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
-  } catch (e) {
-    console.error("[Home/getBanners] 배너 조회 실패 - 속성: { error: ", e, " }");
-    return [];
-  }
+  return fetchProductApi('/api/products/main/banners', { next: { revalidate: 300 } });
 }
 
 export default async function Home() {

@@ -61,9 +61,6 @@ function CompassIcon() {
       strokeWidth={1.5}
       strokeLinecap="square"
       aria-hidden="true"
-      // Tailwind preflight가 `svg { display: block }`을 걸어서 `.empty-state`의 text-align:center로는
-      // 가운데 정렬이 안 된다(왼쪽에 붙는다). 블록 요소가 됐으니 좌우 auto 마진으로 직접 맞춘다.
-      style={{ margin: "0 auto" }}
     >
       <circle cx="12" cy="12" r="9.5" />
       <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />

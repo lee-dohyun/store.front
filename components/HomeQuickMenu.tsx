@@ -31,7 +31,9 @@ const HeadsetIcon = () => (
 );
 
 /**
- * 메인 페이지 플로팅 퀵메뉴(768px 이하에서는 하단 탭바).
+ * 메인 페이지 플로팅 퀵메뉴. 폭에 따른 전환은 @posselect/ui 의 tokens.css 가 한다 —
+ * 768px 이하는 하단 탭바, 769~1339px 는 레일을 숨기고(본문 옆에 여백이 없어 오른쪽 열을 덮는다)
+ * 맨 위로 버튼만 남기며, 1340px 이상에서 오른쪽 레일로 보인다.
  *
  * "최근 본 상품"은 넣지 않았다 — 데이터 부재로 미구현(store.front#37). 최근 본 상품은
  * posselect-shell 이 localStorage 에 기록하는데 localStorage 는 origin 단위라, 상품 상세가 있는

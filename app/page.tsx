@@ -1,7 +1,10 @@
-import { BlueprintCorners } from "@posselect/ui";
+import { BlueprintCorners, CategoryTiles } from "@posselect/ui";
 import Image from "next/image";
 import Link from "next/link";
 import BannerCarousel from "@/components/BannerCarousel";
+import CategoryIcon from "@/components/CategoryIcon";
+import HomeQuickMenu from "@/components/HomeQuickMenu";
+import { topLevelCategoryLinks, type Category } from "@/lib/main-categories";
 import { fetchProductApi } from "@/lib/product-api";
 
 /**
@@ -45,12 +48,6 @@ interface AdCampaign {
   link: string;
   bgColor: string;
   sponsorName: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  parentId: number | null;
 }
 
 const TRUST_POINTS = [
@@ -113,6 +110,7 @@ export default async function Home() {
   ]);
 
   const categoryMap = new Map(categories.map(c => [c.id, c.name]));
+  const categoryTiles = topLevelCategoryLinks(categories).map((c) => ({ ...c, icon: <CategoryIcon name={c.label} /> }));
 
   const renderProductList = (products: ProductSummary[]) => {
     if (products.length === 0) {
@@ -165,6 +163,11 @@ export default async function Home() {
           <BannerCarousel initialBanners={banners} />
         </div>
       )}
+
+      {/* 대분류 카테고리 바로가기 */}
+      <div className="container" style={{ marginBlock: "var(--space-6)" }}>
+        <CategoryTiles items={categoryTiles} />
+      </div>
 
       {/* 상품 그리드 */}
       <main className="container" style={{ paddingBottom: 60 }}>
@@ -238,6 +241,8 @@ export default async function Home() {
           );
         })}
       </main>
+
+      <HomeQuickMenu />
     </div>
   );
 }

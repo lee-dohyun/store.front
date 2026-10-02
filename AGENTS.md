@@ -47,6 +47,9 @@ POST/PUT/PATCH/DELETE를 `SetStatus=403`으로 막는다(msa #155, Next.js RCE �
   게이트웨이를 안 거치므로 멀쩡히 동작해서 배포 후에야 드러난다.
 - 쓰기가 필요하면 이 저장소가 아니라 백엔드 API(auth-api/order-api)에 넣고, 게이트웨이에 해당 경로
   라우트를 별도로 추가해야 한다.
+- 그렇게 열어 둔 경로가 `/api/auth/**` 와 `/api/wishlists/**` 둘이다. 후자는 메인 카드의 찜 하트용으로
+  게이트웨이 `product-api-wishlist-home` 라우트가 product-api 로 넘긴다(gateway#304). `components/Wishlist.tsx`
+  가 브라우저에서 직접 부른다 — 이걸 Server Action 이나 route handler 로 "정리"하면 다시 403 이 된다.
 
 ### 3. 로그인 전 접근이 필요한 페이지는 게이트웨이 화이트리스트도 같이 봐야 한다
 

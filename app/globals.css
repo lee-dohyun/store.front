@@ -43,6 +43,17 @@
   color: var(--color-neutral-600);
   font-size: 13px;
 }
+/* 카드(링크) 위에 찜 하트를 띄우기 위한 래퍼. 그리드 칸 높이를 카드가 그대로 채우게 한다. */
+.product-card-wrap { position: relative; height: 100%; }
+.product-card-wrap > a { display: block; height: 100%; }
+.wish-button {
+  position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-divider); background: var(--color-bg);
+  color: var(--color-neutral-600); cursor: pointer;
+}
+.wish-button:hover, .wish-button[aria-pressed="true"] { color: var(--color-accent); border-color: var(--color-accent); }
 .product-card-body { padding: var(--space-3); }
 .product-card-price { font-size: 16px; font-weight: 800; }
 

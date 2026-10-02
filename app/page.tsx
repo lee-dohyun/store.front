@@ -4,6 +4,7 @@ import Link from "next/link";
 import BannerCarousel from "@/components/BannerCarousel";
 import CategoryIcon from "@/components/CategoryIcon";
 import HomeQuickMenu from "@/components/HomeQuickMenu";
+import { WishlistButton, WishlistProvider } from "@/components/Wishlist";
 import { topLevelCategoryLinks, type Category } from "@/lib/main-categories";
 import { fetchProductApi } from "@/lib/product-api";
 
@@ -120,7 +121,9 @@ export default async function Home() {
     return (
       <div className="product-grid">
         {products.map((p) => (
-          <Link href={`https://product.posselect.com/products/${p.id}`} key={p.id} style={{ textDecoration: "none", color: "inherit" }}>
+          // 하트는 링크의 형제로 둔다 — <a> 안에 <button> 을 넣으면 유효하지 않은 HTML 이고 클릭이 링크로 샌다.
+          <div className="product-card-wrap" key={p.id}>
+          <Link href={`https://product.posselect.com/products/${p.id}`} style={{ textDecoration: "none", color: "inherit" }}>
             <div className="card blueprint elev-sm" style={{ cursor: "pointer", height: "100%" }}>
               <BlueprintCorners />
               <div className="product-card-media" style={{ position: "relative", backgroundColor: "#f5f5f5" }}>
@@ -139,6 +142,8 @@ export default async function Home() {
               </div>
             </div>
           </Link>
+          <WishlistButton productId={p.id} productName={p.name} />
+          </div>
         ))}
       </div>
     );
@@ -170,6 +175,7 @@ export default async function Home() {
       </div>
 
       {/* 상품 그리드 */}
+      <WishlistProvider>
       <main className="container" style={{ paddingBottom: 60 }}>
         <section style={{ marginBottom: "var(--space-8)" }}>
           <h2 style={{ fontSize: 20, fontWeight: "bold", marginBottom: "var(--space-4)" }}>베스트 상품</h2>
@@ -241,6 +247,7 @@ export default async function Home() {
           );
         })}
       </main>
+      </WishlistProvider>
 
       <HomeQuickMenu />
     </div>

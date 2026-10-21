@@ -18,7 +18,7 @@ describe("getNotices", () => {
   });
 
   it("정적 데이터 전체 개수를 그대로 반환한다", () => {
-    expect(getNotices()).toHaveLength(9);
+    expect(getNotices()).toHaveLength(6);
   });
 });
 

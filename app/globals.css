@@ -71,3 +71,9 @@
 
   .product-card-price { font-size: 15px; }
 }
+
+/* FAQ 펼침 표시(store.front#104). <details> 기본 삼각형을 숨기고 +/− 로 바꾼다 — 열림 상태를 JS 없이 CSS 가 읽는다. */
+.faq-item > summary { list-style: none; }
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item .faq-toggle::before { content: "+"; }
+.faq-item[open] .faq-toggle::before { content: "−"; }

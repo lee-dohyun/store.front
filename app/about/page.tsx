@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "회사 소개 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "회사 소개", path: "/about" });
 
 export default function AboutPage() {
   return (

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BlueprintCorners, EmptyState } from "@posselect/ui";
 
 export const metadata: Metadata = {
-  title: "페이지를 찾을 수 없습니다 | PosSelect",
+  title: "페이지를 찾을 수 없습니다", // 뒤의 " | PosSelect" 는 layout 템플릿이 붙인다
 };
 
 /**

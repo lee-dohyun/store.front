@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "채용 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "채용", path: "/careers" });
 
 export default function CareersPage() {
   return (

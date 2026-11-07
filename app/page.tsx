@@ -7,6 +7,7 @@ import HomeQuickMenu from "@/components/HomeQuickMenu";
 import { WishlistButton, WishlistProvider } from "@/components/Wishlist";
 import { topLevelCategoryLinks, type Category } from "@/lib/main-categories";
 import { fetchProductApi } from "@/lib/product-api";
+import { pageMetadata } from "@/lib/site";
 
 /**
  * 이 페이지는 빌드 타임에 프리렌더하지 않는다(#53).
@@ -23,6 +24,9 @@ import { fetchProductApi } from "@/lib/product-api";
  * 즉 HTML 렌더는 매 요청이지만 product.api 호출은 revalidate 주기당 1회다.
  */
 export const dynamic = "force-dynamic";
+
+// 제목은 layout 기본값("PosSelect") 그대로, canonical·og:url 만 대표 호스트 루트로 낸다(store.front#103).
+export const metadata = pageMetadata({ path: "/" });
 
 interface ProductSummary {
   id: number;

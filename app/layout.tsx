@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PosSelect",
     description: "검증된 상품만 엄선하는 PosSelect",
-    url: "https://home.posselect.com",
+    // 대표 호스트는 www.posselect.com(gateway#369) — home 은 게이트웨이가 www 로 301 한다.
+    url: "https://www.posselect.com",
     siteName: "PosSelect",
     images: [
       {

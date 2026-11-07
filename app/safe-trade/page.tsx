@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "안전거래센터 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "안전거래센터", path: "/safe-trade" });
 
 // 에스크로(결제대금예치)·구매 확정은 없다 — 결제가 아직 실결제 연동 전이다(gateway#319). 생기기 전에 약속하지 말 것(store.front#87).
 const ARTICLES = [

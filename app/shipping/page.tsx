@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "배송/교환/반품 안내 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "배송/교환/반품 안내", path: "/shipping" });
 
 // 금액·기간은 실제 계산 규칙과 같아야 한다(store.front#87): 배송비 묶음·조건부 무료 — product.api ShippingFeeCalculator,
 // 반품 기간·교환 사유·환불 안분 — order.api ClaimCommitter / ClaimRefundCalculator. 제주·도서산간 추가 운임은

@@ -1,37 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import JsonLd from "@/components/JsonLd";
+import { rootMetadata, siteJsonLd } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "PosSelect",
-  description: "검증된 상품만 엄선하는 PosSelect",
-  icons: {
-    icon: "https://image.posselect.com/cdn/favicons/favicon-transparent-red-256.png",
-  },
-  openGraph: {
-    title: "PosSelect",
-    description: "검증된 상품만 엄선하는 PosSelect",
-    // 대표 호스트는 www.posselect.com(gateway#369) — home 은 게이트웨이가 www 로 301 한다.
-    url: "https://www.posselect.com",
-    siteName: "PosSelect",
-    images: [
-      {
-        url: "https://image.posselect.com/cdn/logos/posselect-og-share.png",
-        width: 1200,
-        height: 630,
-        alt: "PosSelect 대표 이미지",
-      },
-    ],
-    locale: "ko_KR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "PosSelect",
-    description: "검증된 상품만 엄선하는 PosSelect",
-    images: ["https://image.posselect.com/cdn/logos/posselect-og-share.png"],
-  },
-};
+// title 템플릿·metadataBase·공유 미리보기 기본값은 lib/site.ts 한 곳에서 관리한다(store.front#103).
+export const metadata: Metadata = rootMetadata;
 
 export default function RootLayout({
   children,
@@ -41,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased">
+        <JsonLd data={siteJsonLd} />
         <Script src="https://shell.posselect.com/v1/header.js" strategy="beforeInteractive" />
         <posselect-header />
         {children}

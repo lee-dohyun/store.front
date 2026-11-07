@@ -1,13 +1,31 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { pageMetadata } from "@/lib/site";
 import { getNoticeById } from "../data";
 
-export default function NoticeDetailPage() {
-  const params = useParams<{ id: string }>();
-  const id = Number(params.id);
-  const notice = Number.isFinite(id) ? getNoticeById(id) : undefined;
+type Props = { params: Promise<{ id: string }> };
+
+function findNotice(rawId: string) {
+  const id = Number(rawId);
+  return Number.isFinite(id) ? getNoticeById(id) : undefined;
+}
+
+// 서버 컴포넌트로 바꿔 공지 제목을 <title>·canonical 로 낸다(store.front#103). 본문은 원래도 서버 HTML 에 있었다.
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const notice = findNotice(id);
+  // 없는 공지에는 canonical 을 내지 않는다 — 없는 주소를 대표 주소로 신고하지 않기 위해서다.
+  if (!notice) return { title: "공지사항을 찾을 수 없습니다" };
+  return pageMetadata({
+    title: notice.title,
+    description: notice.body.split("\n")[0].slice(0, 120),
+    path: `/notices/${notice.id}`,
+  });
+}
+
+export default async function NoticeDetailPage({ params }: Props) {
+  const { id } = await params;
+  const notice = findNotice(id);
 
   if (!notice) {
     return (

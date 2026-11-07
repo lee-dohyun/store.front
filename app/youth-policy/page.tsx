@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "청소년보호정책 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "청소년보호정책", path: "/youth-policy" });
 
 const ARTICLES = [
   {

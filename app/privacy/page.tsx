@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "개인정보처리방침 | PosSelect",
-};
+export const metadata: Metadata = pageMetadata({ title: "개인정보처리방침", path: "/privacy" });
 
 const SECTIONS = [
   {

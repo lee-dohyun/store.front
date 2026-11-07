@@ -1,2 +1,5 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://www.posselect.com/sitemap.xml
+Sitemap: https://product.posselect.com/sitemap.xml
